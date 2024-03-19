@@ -9,15 +9,26 @@ part 'widgets/comment_item.dart';
 part 'widgets/comments_section.dart';
 part 'widgets/add_comment_section.dart';
 
-class PostDetails extends StatelessWidget {
+class PostDetails extends StatefulWidget {
   final Post post;
 
-  final PostDetailBloc _postDetailBloc = GetIt.instance.get<PostDetailBloc>();
-
-  PostDetails({
+  const PostDetails({
     required this.post,
     super.key,
   });
+
+  @override
+  State<PostDetails> createState() => _PostDetailsState();
+}
+
+class _PostDetailsState extends State<PostDetails> {
+  final PostDetailBloc _postDetailBloc = GetIt.instance.get<PostDetailBloc>();
+
+  @override
+  void initState() {
+    _postDetailBloc.add(LoadComments(postId: widget.post.id));
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +38,7 @@ class PostDetails extends StatelessWidget {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: Text(post.title),
+        title: Text(widget.post.title),
       ),
       body: SingleChildScrollView(
         physics: const ScrollPhysics(),
@@ -37,7 +48,7 @@ class PostDetails extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                post.title,
+                widget.post.title,
                 style: const TextStyle(
                   fontSize: 21,
                   fontWeight: FontWeight.bold,
@@ -45,7 +56,7 @@ class PostDetails extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                post.body,
+                widget.post.body,
                 style: const TextStyle(
                   fontSize: 14,
                 ),
@@ -53,16 +64,12 @@ class PostDetails extends StatelessWidget {
               const SizedBox(height: 16),
               AddCommentSection(
                 bloc: _postDetailBloc,
-                postId: post.id,
+                postId: widget.post.id,
               ),
               const SizedBox(height: 16),
               BlocBuilder<PostDetailBloc, PostDetailState>(
                 bloc: _postDetailBloc,
                 builder: (context, state) {
-                  if (state is PostDetailStateInitial) {
-                    _postDetailBloc.add(LoadComments(postId: post.id));
-                  }
-        
                   if (state is PostDetailLoaded) {
                     return CommentsSection(comments: state.comments);
                   }
