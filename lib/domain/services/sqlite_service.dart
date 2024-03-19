@@ -6,8 +6,10 @@ abstract class SqliteService {
   );
 
   Future<List<Map<String, Object?>>> get(
-    String table,
-  );
+    String table, {
+    String? where,
+    List<Object?>? whereArgs,
+  });
 
   Future<void> update(
     String table,

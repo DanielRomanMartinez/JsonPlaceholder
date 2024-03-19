@@ -17,8 +17,11 @@ class SqliteCommentsRepository implements CommentsRepository {
   Future<List<Comment>> getComments({
     required int postId,
   }) async {
-    final List<Map<String, Object?>> commentsMap =
-        await _sqliteService.get(commentsTable);
+    final List<Map<String, Object?>> commentsMap = await _sqliteService.get(
+      commentsTable,
+      where: '$postId = ?',
+      whereArgs: [postId],
+    );
 
     return [
       for (final {

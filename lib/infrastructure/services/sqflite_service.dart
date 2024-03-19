@@ -20,9 +20,6 @@ class SqfliteService implements SqliteService {
       path,
       version: 1,
       onCreate: (Database db, int version) async {
-
-
-
         await db.execute(
           'CREATE TABLE ${SqliteCommentsRepository.commentsTable}(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, postId INTEGER, name TEXT, email TEXT, body TEXT)',
         );
@@ -45,9 +42,15 @@ class SqfliteService implements SqliteService {
 
   @override
   Future<List<Map<String, Object?>>> get(
-    String table,
-  ) async {
-    return await database.query(table);
+    String table, {
+    String? where,
+    List<Object?>? whereArgs,
+  }) async {
+    return await database.query(
+      table,
+      where: where,
+      whereArgs: whereArgs,
+    );
   }
 
   @override
